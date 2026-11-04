@@ -52,7 +52,7 @@ if (isset($_GET['editar'])) {
 
                     <div class="mb-3">
                         <label class="form-label">tipo de vehiculo</label>
-                        <select class="form-control" name="tipo_vehiculo">
+                        <select class="form-control" name="tipo_vehiculo" id="tipo_vehiculo">
                             <option value="moto" <?= $editData['tipo_vehiculo'] === 'moto' ? 'selected' : '' ?>>moto
                             </option>
                             <option value="auto" <?= $editData['tipo_vehiculo'] === 'auto' ? 'selected' : '' ?>>auto
@@ -72,11 +72,8 @@ if (isset($_GET['editar'])) {
                     </div>
                     <div class="mb-3">
                         <label class="form-label">modelo</label>
-                        <select class="form-control" name="modelo">
-                            <option value="deportivo" <?= $editData['modelo'] === 'deportivo' ? 'selected' : '' ?>>
-                                deportivo</option>
-                            <option value="familiar" <?= $editData['modelo'] === 'familiar' ? 'selected' : '' ?>>familiar
-                            </option>
+                        <select class="form-control" name="modelo" id="modelo"
+                            data-modelo-actual="<?= htmlspecialchars($editData['modelo']) ?>">
                         </select>
                     </div>
 
@@ -123,19 +120,44 @@ if (isset($_GET['editar'])) {
                                 <td>
                                     <a href="maquinas.php?editar=<?= $m['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
                                     <a href="maquinas.php?eliminar=<?= $m['id'] ?>" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('¿Estás seguro?')">Eliminar</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">No hay vehiculos registrados.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                                        onclick="return confirm(' ¿Estás seguro?')">Eliminar</a>
+                                    </td>
+                                    </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No hay vehiculos registrados.</td>
+                                </tr>
+                                    <?php endif; ?>
+                            </tbody>
+                            </table>
+                    </div>
+            </div>
+            <script>
+                const tipoVehiculo = document.getElementById('tipo_vehiculo');
+                const modelo = document.getElementById('modelo');
+
+                function actualizarModelos(modeloInicial = '') {
+                    const opciones = tipoVehiculo.value === 'moto'
+                        ? ['deportiva', 'enduro']
+                        : ['deportivo', 'familiar'];
+
+                    modelo.replaceChildren();
+
+                    opciones.forEach(opcion => {
+                        const elemento = document.createElement('option');
+                        elemento.value = opcion;
+                        elemento.textContent = opcion;
+                        modelo.appendChild(elemento);
+                    });
+
+                    modelo.value = opciones.includes(modeloInicial) ? modeloInicial : opciones[0];
+                }
+
+                actualizarModelos(modelo.dataset.modeloActual);
+
+                tipoVehiculo.addEventListener('change', () => actualizarModelos());
+            </script>
 </body>
 
 </html>
