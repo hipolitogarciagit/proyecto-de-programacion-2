@@ -1,7 +1,8 @@
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    rol ENUM('admin', 'lector') NOT NULL DEFAULT 'lector'
 );
 CREATE TABLE maquinas (
     id INT AUTO_INCREMENT PRIMARY KEY,

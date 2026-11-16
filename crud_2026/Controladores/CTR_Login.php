@@ -24,6 +24,7 @@ if (isset($_POST['accion'])) {
 
     if ($usuario && password_verify($password, $usuario['password'])) {
       $_SESSION['user'] = $usuario['email'];
+      $_SESSION['rol'] = $usuario['rol'];
       header("Location: ../admin.php");
     } else {
       header("Location: ../index.php?error=DATOS INCORRECTOS");

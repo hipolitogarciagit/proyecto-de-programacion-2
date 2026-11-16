@@ -6,6 +6,13 @@ class CTR_Maquina
 
   public function procesarAccion()
   {
+    $escritura = $_SERVER['REQUEST_METHOD'] === 'POST'
+      || isset($_GET['eliminar']);
+
+    if ($escritura && ($_SESSION['rol'] ?? '') !== 'admin') {
+      http_response_code(403);
+      exit('No tenés permiso para modificar vehículos.');
+    }
     /* Guardar / Editar (POST)*/
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $id = $_POST['id'] ?? '';
@@ -22,7 +29,7 @@ class CTR_Maquina
           MDL_Maquina::insertar($tipo_vehiculo, $marca, $color, $modelo);
           $msg = "vehiculo agregado con éxito.";
         }
-        header("Location: /programacion 2/proyecto_Final\crud_2026/maquinas.php?msg=" . urlencode($msg));
+        header("Location: maquinas.php?msg=" . urlencode($msg));
 
         exit();
       }
@@ -31,7 +38,7 @@ class CTR_Maquina
     /* Eliminación (GET)*/
     if (isset($_GET['eliminar'])) {
       MDL_Maquina::eliminar($_GET['eliminar']);
-      header("Location: /programacion 2/proyecto_Final\crud_2026/maquinas.php?msg= vehiculo eliminado" . urlencode($msg));
+      header("Location: maquinas.php?msg=" . urlencode("vehiculo eliminado"));
       exit();
     }
   }
