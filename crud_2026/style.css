@@ -1,6 +1,8 @@
+/* Cambia el color de fondo de toda la pagina. */
 body {
     background-color:lightseagreen !important;
 }
+/* Evita que el area de texto cambie de tamano. */
 textarea {
     resize: none;
     height: 40px;

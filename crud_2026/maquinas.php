@@ -1,21 +1,25 @@
 <?php
+// Inicia la sesion para verificar si el usuario ingreso al sistema.
 session_start();
 
+// Si no existe el usuario en sesion, redirige al inicio de sesion.
 if (!isset($_SESSION['user'])) {
     header('Location: index.php');
     exit;
 }
 
+// Guarda si el usuario tiene permisos de administrador.
 $esAdmin = ($_SESSION['rol'] ?? '') === 'admin';
+// Carga el controlador encargado de las acciones de vehiculos.
 require_once 'Controladores/CTR_Maquina.php';
-/* Ejecutar acciones del controlador (Guardar/Eliminar)*/
+// Ejecuta el guardado, la modificacion o la eliminacion solicitada.
 $controlador = new CTR_Maquina();
 $controlador->procesarAccion();
 
-/*Obtener datos para la vista*/
+// Obtiene todas las maquinas para mostrarlas en la tabla.
 $maquinas = MDL_Maquina::obtenerTodas();
 
-/*Cargar datos si se presiona editar*/
+// Define los datos vacios que usa el formulario al crear un vehiculo.
 $editData = ['id' => '', 'tipo_vehiculo' => '', 'marca' => '', 'color' => '', 'modelo' => 'deportivo'];
 if (isset($_GET['editar'])) {
     $resultado = MDL_Maquina::obtenerPorId($_GET['editar']);
@@ -36,6 +40,7 @@ if (isset($_GET['editar'])) {
 
 <body class="container mt-4">
 
+    <!-- Muestra el encabezado y el enlace para volver al panel. -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Gestión de Vehiculos</h2>
         <a href="admin.php" class="btn btn-outline-secondary btn-sm">Volver al Panel</a>
@@ -43,6 +48,7 @@ if (isset($_GET['editar'])) {
     <hr>
 
     <?php if (!empty($_GET['msg'])): ?>
+        <!-- Presenta el mensaje enviado despues de una accion. -->
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <?= htmlspecialchars($_GET['msg']) ?>
 
@@ -53,7 +59,7 @@ if (isset($_GET['editar'])) {
 
     <div class="row">
         <?php if ($esAdmin): ?>
-            <!-- Formulario -->
+            <!-- Muestra el formulario solo para usuarios administradores. -->
             <div class="col-md-4">
                 <div class="card p-3 shadow-sm">
                     <h4><?= !empty($editData['id']) ? 'Modificar Vehiculo' : 'Crear vehiculo' ?></h4>
@@ -98,7 +104,7 @@ if (isset($_GET['editar'])) {
             </div>
         <?php endif; ?>
 
-        <!-- Tabla -->
+        <!-- Muestra la tabla con todos los vehiculos registrados. -->
         <div class="<?= $esAdmin ? 'col-md-8' : 'col-md-12' ?>">
             <table class="table table-bordered table-striped align-middle">
                 <thead class="table-dark">
@@ -150,9 +156,11 @@ if (isset($_GET['editar'])) {
         </div>
         <?php if ($esAdmin): ?>
             <script>
+            // Obtiene los controles del tipo de vehiculo y el modelo.
             const tipoVehiculo = document.getElementById('tipo_vehiculo');
             const modelo = document.getElementById('modelo');
 
+            // Actualiza las opciones disponibles segun el tipo seleccionado.
             function actualizarModelos(modeloInicial = '') {
                 const opciones = tipoVehiculo.value === 'moto'
                     ? ['deportiva', 'enduro']
@@ -170,6 +178,7 @@ if (isset($_GET['editar'])) {
                 modelo.value = opciones.includes(modeloInicial) ? modeloInicial : opciones[0];
             }
 
+            // Carga los modelos al abrir la pagina y escucha cambios futuros.
             actualizarModelos(modelo.dataset.modeloActual);
 
             tipoVehiculo.addEventListener('change', () => actualizarModelos());
